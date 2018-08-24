@@ -3,7 +3,7 @@ from psycopg2.extras import RealDictCursor
 import os
 from flask import Flask
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
 class DatabaseAccess:
     def __init__(self):
@@ -23,12 +23,12 @@ class DatabaseAccess:
         except psycopg2.Error:
             print("can not establish a database connection")
 
-    def dbtest(self):
-        print ("we got this")
+    # def dbtest(self):
+    #     print ("we got this")
 
 
-if __name__ == '__main__':
-    db = DatabaseAccess()
-    db.dbtest()
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     db = DatabaseAccess()
+#     db.dbtest()
+#     app.run(debug=True)
             
