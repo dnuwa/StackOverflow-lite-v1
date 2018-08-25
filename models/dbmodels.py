@@ -65,6 +65,6 @@ class DatabaseAccess:
 if __name__ == '__main__':
     db = DatabaseAccess()
     db.no_name_duplicates("daniel")
-    db.no_email_duplicates("danile.nuwa@gmail.com")
+    # db.no_email_duplicates("danile.nuwa@gmail.com")
     app.run(debug=True)
             
