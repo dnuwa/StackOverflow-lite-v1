@@ -81,3 +81,30 @@ class AuthLogin(Resource):
 
         except Exception as err:
             return {'error': str(err)+"field missing!"}, 401
+
+class Questions(Resource):
+   
+    @jwt_required
+    def post(self):
+        new_qn = DatabaseAccess()
+        new_qn.create_table_questions()
+        qn_info = request.get_json()
+
+        try:
+            question = qn_info['question'].strip()
+            current_user_id = get_jwt_identity()
+
+            if question == "":
+                return {'error':'Please add a question'}, 400
+   
+            new_qn.post_a_question(current_user_id, question)
+            return {'msg':'Question has successfully added'}, 201
+
+        except Exception as err:
+            return {'error': str(err)+ "field missing!"}, 401
+
+    @jwt_required
+    def get(self):
+        fetch_all = DatabaseAccess()
+        all_questions = fetch_all.retrieve_all()
+        return {'Asked Questions': all_questions}, 200

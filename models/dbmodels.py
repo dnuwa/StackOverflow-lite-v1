@@ -54,17 +54,27 @@ class DatabaseAccess:
         return rows
 
     def create_table_questions(self):
-        sql_query = "CREATE TABLE IF NOT EXISTS questions(qn_id serial PRIMARY KEY, user_id varchar(100) NOT NULL, question varchar(1000) NOT NULL"
+        sql_query = "CREATE TABLE IF NOT EXISTS questions(qn_id serial PRIMARY KEY, user_id varchar(100) NOT NULL, question varchar(1000) NOT NULL)"
         self.cursor.execute(sql_query)
 
+    def post_a_question(self, user_id, question):
+        sql_query = "INSERT INTO questions (user_id, question) VALUES (%s, %s)"
+        self.cursor.execute(sql_query, (user_id, question,))
+
+    def retrieve_all(self):
+        dbquery = "SELECT * FROM questions"
+        self.cursor.execute(dbquery)
+        data = self.cursor.fetchall()
+        return data
+
     def create_table_answer(self):
-        sql_query = "CREATE TABLE IF NOT EXISTS answers(ans_id serial PRIMARY KEY, qn_id varchar(100) NOT NULL, user_id varchar(100) NOT NULL, answer varchar(200) NOT NULL, ans_state varchar(20)"
+        sql_query = "CREATE TABLE IF NOT EXISTS answers(ans_id serial PRIMARY KEY, qn_id varchar(100) NOT NULL, user_id varchar(100) NOT NULL, answer varchar(200) NOT NULL, ans_state varchar(20))"
         self.cursor.execute(sql_query)
 
 
 if __name__ == '__main__':
     db = DatabaseAccess()
-    db.no_name_duplicates("daniel")
+    db.retrieve_all()
     # db.no_email_duplicates("danile.nuwa@gmail.com")
     app.run(debug=True)
             
