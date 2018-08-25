@@ -80,7 +80,7 @@ class AuthLogin(Resource):
                     return {'error': 'You have entered a wrong password'}, 400
 
         except Exception as err:
-            return {'error': str(err)+"field missing!"}, 401
+            return {'error': str(err)+" field missing!"}, 401
 
 class Questions(Resource):
    
@@ -113,9 +113,34 @@ class QuestionByID(Resource):
 
     @jwt_required
     def get(self, questionId):
-        if not isinstance(questionId, int):
-            return {'error':'questionId must be an integer'}, 406
+        try:
+            fetch_one_qn = DatabaseAccess()
+            ID = int(questionId)
+            question = fetch_one_qn.get_qn_by_id(ID)
+            return {'Question': question}, 200
+        except ValueError as err:
+            return {'error':str(err)+'should be an integer'}, 406
 
-        fetch_one_qn = DatabaseAccess()
-        question = fetch_one_qn.get_qn_by_id(questionId)
-        return {'Question': question}, 200
+    @jwt_required
+    def delete(self, questionId):
+        try:
+            user_id = get_jwt_identity()
+            id_string = str(user_id)
+            qn = DatabaseAccess()
+            result = qn.get_qn_by_id(questionId)
+            for item in result:
+                if item['user_id'] == id_string:
+                    
+                    qn.delete_question(questionId)
+                    return {'msg':'Question successfuly deleted'}, 200  #204
+
+                else:
+                    return {'error':'Un-Authorised to DELETE this QN'}, 403
+
+            return {'error':'Attempt to delete non existing data'}, 200  #204
+
+        except Exception as err:
+            return {'error': str(err)+ "THE questionID SHOULD BE AN INTEGER!"}, 406
+
+            
+            

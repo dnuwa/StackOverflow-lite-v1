@@ -74,6 +74,10 @@ class DatabaseAccess:
         # print (data)
         return data
 
+    def delete_question(self, qn_id):
+        deletion_query = "DELETE FROM questions WHERE qn_id = %s"
+        self.cursor.execute(deletion_query, (qn_id, ))
+
     def create_table_answer(self):
         sql_query = "CREATE TABLE IF NOT EXISTS answers(ans_id serial PRIMARY KEY, qn_id varchar(100) NOT NULL, user_id varchar(100) NOT NULL, answer varchar(200) NOT NULL, ans_state varchar(20))"
         self.cursor.execute(sql_query)
