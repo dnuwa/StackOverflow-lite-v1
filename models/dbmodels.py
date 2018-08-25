@@ -3,7 +3,7 @@ from psycopg2.extras import RealDictCursor
 import os
 from flask import Flask
 
-# app = Flask(__name__)
+app = Flask(__name__)
 
 class DatabaseAccess:
     def __init__(self):
@@ -24,9 +24,34 @@ class DatabaseAccess:
             print("can not establish a database connection")
 
     def create_table_subscribers(self):
-        sql_query = "CREATE TABLE IF NOT EXISTS subscribers(user_id serial PRIMARY KEY, display_name varchar(100) NOT NULL, email varchar(100) NOT NULL, password varchar(100) NOT NULL"
+        sql_query = "CREATE TABLE IF NOT EXISTS subscribers(user_id serial PRIMARY KEY, display_name varchar(100) NOT NULL, email varchar(100) NOT NULL, password varchar(100) NOT NULL)"
         self.cursor.execute(sql_query)
         print ('table created')
+
+    def add_new_subscriber(self, display_name, email, password):
+        query = "INSERT INTO subscribers (display_name, email, password) VALUES (%s, %s, %s)"
+        self.cursor.execute(query, (display_name, email, password))
+
+    def query_all_subscribers(self):
+        query = "SELECT * FROM subscribers"
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+        print (rows)
+        return rows
+
+    def no_name_duplicates(self, display_name):
+        query = "SELECT * FROM subscribers WHERE display_name = %s"
+        self.cursor.execute(query, (display_name, ))
+        rows = self.cursor.fetchall()
+        print (rows)
+        return rows 
+
+    def no_email_duplicates(self, email):
+        query = "SELECT * FROM subscribers WHERE email = %s"
+        self.cursor.execute(query, (email, ))
+        rows = self.cursor.fetchall()
+        #print (rows)
+        return rows
 
     def create_table_questions(self):
         sql_query = "CREATE TABLE IF NOT EXISTS questions(qn_id serial PRIMARY KEY, user_id varchar(100) NOT NULL, question varchar(1000) NOT NULL"
@@ -37,8 +62,9 @@ class DatabaseAccess:
         self.cursor.execute(sql_query)
 
 
-# if __name__ == '__main__':
-#     db = DatabaseAccess()
-#     db.dbtest()
-#     app.run(debug=True)
+if __name__ == '__main__':
+    db = DatabaseAccess()
+    db.no_name_duplicates("daniel")
+    db.no_email_duplicates("danile.nuwa@gmail.com")
+    app.run(debug=True)
             
