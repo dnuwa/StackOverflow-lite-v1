@@ -67,6 +67,13 @@ class DatabaseAccess:
         data = self.cursor.fetchall()
         return data
 
+    def get_qn_by_id(self, qn_id):
+        qnquery = "SELECT * FROM questions WHERE qn_id = %s"
+        self.cursor.execute(qnquery, (qn_id, ))
+        data = self.cursor.fetchall()
+        # print (data)
+        return data
+
     def create_table_answer(self):
         sql_query = "CREATE TABLE IF NOT EXISTS answers(ans_id serial PRIMARY KEY, qn_id varchar(100) NOT NULL, user_id varchar(100) NOT NULL, answer varchar(200) NOT NULL, ans_state varchar(20))"
         self.cursor.execute(sql_query)
@@ -74,7 +81,7 @@ class DatabaseAccess:
 
 if __name__ == '__main__':
     db = DatabaseAccess()
-    db.retrieve_all()
+    db.get_qn_by_id(1)
     # db.no_email_duplicates("danile.nuwa@gmail.com")
     app.run(debug=True)
             

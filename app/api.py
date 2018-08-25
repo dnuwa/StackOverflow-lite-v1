@@ -108,3 +108,14 @@ class Questions(Resource):
         fetch_all = DatabaseAccess()
         all_questions = fetch_all.retrieve_all()
         return {'Asked Questions': all_questions}, 200
+
+class QuestionByID(Resource):
+
+    @jwt_required
+    def get(self, questionId):
+        if not isinstance(questionId, int):
+            return {'error':'questionId must be an integer'}, 406
+
+        fetch_one_qn = DatabaseAccess()
+        question = fetch_one_qn.get_qn_by_id(questionId)
+        return {'Question': question}, 200
