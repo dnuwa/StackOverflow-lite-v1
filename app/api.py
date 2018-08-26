@@ -145,6 +145,7 @@ class QuestionByID(Resource):
         except Exception as err:
             return {'error': str(err) + "THE questionID SHOULD BE AN INTEGER!"}, 406
 
+
 class Answers(Resource):
 
     @jwt_required
@@ -161,11 +162,12 @@ class Answers(Resource):
 
             new_answer.create_table_answer()
             new_answer.post_answer(qnId, user_id, answer)
-            return {'msg':'An answer has been successfully added'}, 201
+            return {'msg': 'An answer has been successfully added'}, 201
 
         except Exception as err:
             return {'error': str(err) + "THE questionID SHOULD BE AN INTEGER!"}, 406
-            
+
+
 class FetchAllAnswers(Resource):
 
     def get(self):
@@ -174,3 +176,48 @@ class FetchAllAnswers(Resource):
         return {'All-Answers': select_all_answers}
 
 
+class MarkAnswerPreferred(Resource):
+
+    @jwt_required
+    def put(self, questionId, answerId):
+        # user_data = request.get_json()
+        # ans_status = user_data['ans_state']
+
+        # current_user = get_jwt_identity()
+
+        # get_question = DatabaseAccess()
+        # result = get_question.get_qn_by_id(questionId)
+        # if not result:
+        #     return {'error': 'Question does not exist'}, 401
+        pass
+
+
+class EditAnswer(Resource):
+
+    @jwt_required
+    def put(self, questionId, answerId):
+        try:
+            current_user_identity = get_jwt_identity()
+
+            query = DatabaseAccess()
+            result_on_query = query.query_answers_table(questionId, answerId)
+
+            if not result_on_query:
+                return {'msg': 'No such answer in database'}, 401
+
+            if int(result_on_query['user_id']) == current_user_identity:
+                new_data = request.get_json()
+                ans_changes = new_data['answer'].strip()
+                qnobj = DatabaseAccess()
+                qnobj.edit_answer(questionId, answerId, ans_changes)
+                return {'msg': 'Changes have been saved successfully'}, 201
+
+            else:
+                return {'msg': 'you are not permited to edit this'}, 403
+
+            # query_questions_table = query.get_qn_by_id(questionId)
+            # for user in query_questions_table:
+            #     if int(user['user_id']) == current_user_identity
+
+        except Exception as err:
+            return {'error': str(err) + "THE questionID and answerId SHOULD BE INTEGERS!"}, 406

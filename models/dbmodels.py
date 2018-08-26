@@ -73,7 +73,7 @@ class DatabaseAccess:
         qnquery = "SELECT * FROM questions WHERE qn_id = %s"
         self.cursor.execute(qnquery, (qn_id, ))
         data = self.cursor.fetchall()
-        print (data)
+        print(data)
         return data
 
     def delete_question(self, qn_id):
@@ -92,13 +92,30 @@ class DatabaseAccess:
         get_all_query = "SELECT * FROM answers"
         self.cursor.execute(get_all_query)
         result = self.cursor.fetchall()
-        print (result)
+        print(result)
         return result
 
+    def update_an_answer(self, ans_id, ans_state):
+        edit_query = "UPDATE answers SET ans_state = %s WHERE ans_id = %s"
+        vars = ans_state, ans_id
+        self.cursor.execute(edit_query, vars)
+
+    def edit_answer(self, ans_id, qn_id, ans_changes):
+        query = "UPDATE answers SET answer = %s WHERE ans_id = %s AND qn_id = %s"
+        vars = ans_changes, ans_id, qn_id
+        self.cursor.execute(query, vars)
+
+    def query_answers_table(self, ans_id, qn_id):
+        query_db = "SELECT * FROM answers WHERE ans_id = %s AND qn_id = %s"
+        vars = ans_id, qn_id
+        self.cursor.execute(query_db, vars)
+        result = self.cursor.fetchone()
+        print(result)
+        return result
 
 
 if __name__ == '__main__':
     db = DatabaseAccess()
-    db.get_all_answers()
+    db.query_answers_table('1', '2')
     # db.no_email_duplicates("danile.nuwa@gmail.com")
     app.run(debug=True)
