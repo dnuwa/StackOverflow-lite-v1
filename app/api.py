@@ -70,11 +70,12 @@ class AuthLogin(Resource):
 
             for user in current_user:
                 if user['display_name'] == display_name and check_password_hash(user['password'], password):
-                    access_token = create_access_token(identity=user['user_id'])
+                    access_token = create_access_token(
+                        identity=user['user_id'])
                     return {
                         'msg': 'Logged in as {}'.format(user['display_name']),
                         'Token': access_token
-                        }, 200
+                    }, 200
 
                 else:
                     return {'error': 'You have entered a wrong password'}, 400
@@ -82,8 +83,9 @@ class AuthLogin(Resource):
         except Exception as err:
             return {'error': str(err)+" field missing!"}, 401
 
+
 class Questions(Resource):
-   
+
     @jwt_required
     def post(self):
         new_qn = DatabaseAccess()
@@ -95,19 +97,20 @@ class Questions(Resource):
             current_user_id = get_jwt_identity()
 
             if question == "":
-                return {'error':'Please add a question'}, 400
-   
+                return {'error': 'Please add a question'}, 400
+
             new_qn.post_a_question(current_user_id, question)
-            return {'msg':'Question has successfully added'}, 201
+            return {'msg': 'Question has successfully added'}, 201
 
         except Exception as err:
-            return {'error': str(err)+ "field missing!"}, 401
+            return {'error': str(err) + "field missing!"}, 401
 
     @jwt_required
     def get(self):
         fetch_all = DatabaseAccess()
         all_questions = fetch_all.retrieve_all()
         return {'Asked Questions': all_questions}, 200
+
 
 class QuestionByID(Resource):
 
@@ -119,7 +122,7 @@ class QuestionByID(Resource):
             question = fetch_one_qn.get_qn_by_id(ID)
             return {'Question': question}, 200
         except ValueError as err:
-            return {'error':str(err)+'should be an integer'}, 406
+            return {'error': str(err)+'should be an integer'}, 406
 
     @jwt_required
     def delete(self, questionId):
@@ -130,17 +133,44 @@ class QuestionByID(Resource):
             result = qn.get_qn_by_id(questionId)
             for item in result:
                 if item['user_id'] == id_string:
-                    
+
                     qn.delete_question(questionId)
-                    return {'msg':'Question successfuly deleted'}, 200  #204
+                    return {'msg': 'Question successfuly deleted'}, 200  # 204
 
                 else:
-                    return {'error':'Un-Authorised to DELETE this QN'}, 403
+                    return {'error': 'Un-Authorised to DELETE this QN'}, 403
 
-            return {'error':'Attempt to delete non existing data'}, 200  #204
+            return {'error': 'Attempt to delete non existing data'}, 200  # 204
 
         except Exception as err:
-            return {'error': str(err)+ "THE questionID SHOULD BE AN INTEGER!"}, 406
+            return {'error': str(err) + "THE questionID SHOULD BE AN INTEGER!"}, 406
 
+class Answers(Resource):
+
+    @jwt_required
+    def post(self, questionId):
+        data = request.get_json()
+        user_id = get_jwt_identity()
+        try:
+            answer = data['answer']
+            new_answer = DatabaseAccess()
+            qnId = int(questionId)
+            db_check = new_answer.get_qn_by_id(qnId)
+            if not db_check:
+                return {'error': 'Question does not exist'}
+
+            new_answer.create_table_answer()
+            new_answer.post_answer(qnId, user_id, answer)
+            return {'msg':'An answer has been successfully added'}, 201
+
+        except Exception as err:
+            return {'error': str(err) + "THE questionID SHOULD BE AN INTEGER!"}, 406
             
-            
+class FetchAllAnswers(Resource):
+
+    def get(self):
+        all_answers = DatabaseAccess()
+        select_all_answers = all_answers.get_all_answers()
+        return {'All-Answers': select_all_answers}
+
+
