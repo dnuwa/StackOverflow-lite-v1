@@ -180,16 +180,21 @@ class MarkAnswerPreferred(Resource):
 
     @jwt_required
     def put(self, questionId, answerId):
-        # user_data = request.get_json()
-        # ans_status = user_data['ans_state']
+        current_user_identity = get_jwt_identity()
 
-        # current_user = get_jwt_identity()
+        query = DatabaseAccess()
+        query_questions_table = query.get_qn_by_id(questionId)
+        for user in query_questions_table:
+            if int(user['user_id']) == current_user_identity:
 
-        # get_question = DatabaseAccess()
-        # result = get_question.get_qn_by_id(questionId)
-        # if not result:
-        #     return {'error': 'Question does not exist'}, 401
-        pass
+                mark = request.get_json()
+                state = mark['ans_state']
+                answer_to_mark = DatabaseAccess()
+                answer_to_mark.mark_answer(questionId, answerId, state)
+                return {'msg': 'Answer has been marked as prefered'}, 201
+
+            else:
+                return {'msg': 'You don not own this qn'}, 403
 
 
 class EditAnswer(Resource):
@@ -205,6 +210,7 @@ class EditAnswer(Resource):
             if not result_on_query:
                 return {'msg': 'No such answer in database'}, 401
 
+            # updating an answer
             if int(result_on_query['user_id']) == current_user_identity:
                 new_data = request.get_json()
                 ans_changes = new_data['answer'].strip()
@@ -215,9 +221,19 @@ class EditAnswer(Resource):
             else:
                 return {'msg': 'you are not permited to edit this'}, 403
 
+            # mark an answer as preferred
             # query_questions_table = query.get_qn_by_id(questionId)
             # for user in query_questions_table:
-            #     if int(user['user_id']) == current_user_identity
+            #     if int(user['user_id']) == current_user_identity:
+
+            #         mark = request.get_json()
+            #         state = mark['ans_state']
+            #         answer_to_mark = DatabaseAccess()
+            #         answer_to_mark.mark_answer(questionId, answerId, state)
+            #         return {'msg': 'Answer has been marked as prefered'}, 201
+
+            #     else:
+            #         return {'msg': 'You don not own this qn'}, 403
 
         except Exception as err:
             return {'error': str(err) + "THE questionID and answerId SHOULD BE INTEGERS!"}, 406
