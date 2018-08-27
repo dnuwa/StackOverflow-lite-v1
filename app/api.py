@@ -116,11 +116,17 @@ class QuestionByID(Resource):
 
     @jwt_required
     def get(self, questionId):
+        question = None
         try:
             fetch_one_qn = DatabaseAccess()
             ID = int(questionId)
-            question = fetch_one_qn.get_qn_by_id(ID)
-            return {'Question': question}, 200
+            question_list = fetch_one_qn.get_qn_by_id(ID)
+            answers_list = fetch_one_qn.get_answers_to_a_qn(questionId)
+            for qn in question_list:
+                question = qn['question']
+                
+            return {'Question': question, 'Answers':answers_list}, 200
+           
         except ValueError as err:
             return {'error': str(err)+'should be an integer'}, 406
 

@@ -92,8 +92,16 @@ class DatabaseAccess:
         get_all_query = "SELECT * FROM answers"
         self.cursor.execute(get_all_query)
         result = self.cursor.fetchall()
-        print(result)
+        # print(result)
         return result
+
+    def get_answers_to_a_qn(self, qn_id):
+        query = "SELECT answer, ans_state FROM answers WHERE qn_id = %s"
+        self.cursor.execute(query, (qn_id, ))
+        data = self.cursor.fetchall()
+        print (data)
+        return data
+    
 
     def query_answers_table(self, ans_id, qn_id):
         query_db = "SELECT * FROM answers WHERE ans_id = %s AND qn_id = %s"
@@ -116,6 +124,8 @@ class DatabaseAccess:
 
 if __name__ == '__main__':
     db = DatabaseAccess()
-    db.query_answers_table('1', '2')
+    db.get_answers_to_a_qn("1")
+    # db.get_qn_by_id(5)
+    # db.query_answers_table('1', '2')
     # db.no_email_duplicates("danile.nuwa@gmail.com")
     app.run(debug=True)
