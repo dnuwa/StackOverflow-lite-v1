@@ -81,8 +81,9 @@ class DatabaseAccess:
         self.cursor.execute(deletion_query, (qn_id, ))
 
     def create_table_answer(self):
-        sql_query = "CREATE TABLE IF NOT EXISTS answers(ans_id serial PRIMARY KEY, qn_id varchar(100) NOT NULL, user_id varchar(100) NOT NULL, answer varchar(200) NOT NULL, ans_state varchar(20))"
+        sql_query = "CREATE TABLE IF NOT EXISTS answers(ans_id serial PRIMARY KEY, qn_id varchar(100) NOT NULL, user_id varchar(100) NOT NULL, answer varchar(200) NOT NULL, prefered BOOLEAN NOT NULL DEFAULT FALSE)"
         self.cursor.execute(sql_query)
+        print("table created")
 
     def post_answer(self, qn_id, user_id, ans):
         ans_query = "INSERT INTO answers (qn_id, user_id, answer) VALUES (%s, %s, %s)"
@@ -96,7 +97,7 @@ class DatabaseAccess:
         return result
 
     def get_answers_to_a_qn(self, qn_id):
-        query = "SELECT answer, ans_state FROM answers WHERE qn_id = %s"
+        query = "SELECT answer, prefered FROM answers WHERE qn_id = %s"
         self.cursor.execute(query, (qn_id, ))
         data = self.cursor.fetchall()
         print (data)
@@ -116,16 +117,18 @@ class DatabaseAccess:
         vars = ans_changes, ans_id, qn_id
         self.cursor.execute(query, vars)
 
-    def mark_answer(self, ans_id, qn_id, ans_state):
-        mark_query = "UPDATE answers SET ans_state = %s WHERE ans_id = %s and qn_id = %s"
-        vars = ans_state, ans_id, qn_id
+    def mark_answer(self, ans_id, qn_id):
+        mark_query = "UPDATE answers SET prefered = TRUE WHERE ans_id = %s and qn_id = %s"
+        vars = ans_id, qn_id
         self.cursor.execute(mark_query, vars)
 
 
 if __name__ == '__main__':
     db = DatabaseAccess()
-    db.get_answers_to_a_qn("1")
+    db.create_table_answer()
+    # db.mark_answer(2, "6", True)
+    # db.get_answers_to_a_qn("1")
     # db.get_qn_by_id(5)
     # db.query_answers_table('1', '2')
     # db.no_email_duplicates("danile.nuwa@gmail.com")
-    app.run(debug=True)
+    # app.run(debug=True)

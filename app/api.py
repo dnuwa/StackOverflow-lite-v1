@@ -43,7 +43,7 @@ class Users(Resource):
                     return {'msg': 'An account with this email exists'}, 401
 
             new_user.add_new_subscriber(display_name, email, hashed_password)
-            print("user created")
+            # print("user created")
             return {'msg': 'success!'}, 201
 
         except KeyError as e:
@@ -193,10 +193,13 @@ class MarkAnswerPreferred(Resource):
         for user in query_questions_table:
             if int(user['user_id']) == current_user_identity:
 
-                mark = request.get_json()
-                state = mark['ans_state']
+                # mark = request.get_json()
+                # state = mark['ans_state']
+                
                 answer_to_mark = DatabaseAccess()
-                answer_to_mark.mark_answer(questionId, answerId, state)
+                
+                answer_to_mark.mark_answer(questionId, answerId)
+                
                 return {'msg': 'Answer has been marked as prefered'}, 201
 
             else:
