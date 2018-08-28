@@ -124,9 +124,9 @@ class QuestionByID(Resource):
             answers_list = fetch_one_qn.get_answers_to_a_qn(questionId)
             for qn in question_list:
                 question = qn['question']
-                
-            return {'Question': question, 'Answers':answers_list}, 200
-           
+
+            return {'Question': question, 'Answers': answers_list}, 200
+
         except ValueError as err:
             return {'error': str(err)+'should be an integer'}, 406
 
@@ -141,6 +141,7 @@ class QuestionByID(Resource):
                 if item['user_id'] == id_string:
 
                     qn.delete_question(questionId)
+                    qn.delete_all_answers_to_a_deleted_question(questionId)
                     return {'msg': 'Question successfuly deleted'}, 200  # 204
 
                 else:
@@ -192,16 +193,9 @@ class MarkAnswerPreferred(Resource):
         query_questions_table = query.get_qn_by_id(questionId)
         for user in query_questions_table:
             if int(user['user_id']) == current_user_identity:
-
-                # mark = request.get_json()
-                # state = mark['ans_state']
-                
                 answer_to_mark = DatabaseAccess()
-                
                 answer_to_mark.mark_answer(questionId, answerId)
-                
                 return {'msg': 'Answer has been marked as prefered'}, 201
-
             else:
                 return {'msg': 'You don not own this qn'}, 403
 
@@ -229,20 +223,6 @@ class EditAnswer(Resource):
 
             else:
                 return {'msg': 'you are not permited to edit this'}, 403
-
-            # mark an answer as preferred
-            # query_questions_table = query.get_qn_by_id(questionId)
-            # for user in query_questions_table:
-            #     if int(user['user_id']) == current_user_identity:
-
-            #         mark = request.get_json()
-            #         state = mark['ans_state']
-            #         answer_to_mark = DatabaseAccess()
-            #         answer_to_mark.mark_answer(questionId, answerId, state)
-            #         return {'msg': 'Answer has been marked as prefered'}, 201
-
-            #     else:
-            #         return {'msg': 'You don not own this qn'}, 403
 
         except Exception as err:
             return {'error': str(err) + "THE questionID and answerId SHOULD BE INTEGERS!"}, 406

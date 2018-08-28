@@ -93,18 +93,20 @@ class DatabaseAccess:
         get_all_query = "SELECT * FROM answers"
         self.cursor.execute(get_all_query)
         result = self.cursor.fetchall()
-        # print(result)
         return result
 
     def get_answers_to_a_qn(self, qn_id):
         query = "SELECT answer, prefered FROM answers WHERE qn_id = %s"
         self.cursor.execute(query, (qn_id, ))
         data = self.cursor.fetchall()
-        print (data)
+        print(data)
         return data
-    
 
-    def query_answers_table(self, ans_id, qn_id):
+    def delete_all_answers_to_a_deleted_question(self, qn_id):
+        deletion_query = "DELETE FROM answers WHERE qn_id = %s"
+        self.cursor.execute(deletion_query, (qn_id, ))
+
+    def query_answers_table(self, qn_id, ans_id):
         query_db = "SELECT * FROM answers WHERE ans_id = %s AND qn_id = %s"
         vars = ans_id, qn_id
         self.cursor.execute(query_db, vars)
@@ -112,20 +114,22 @@ class DatabaseAccess:
         print(result)
         return result
 
-    def edit_answer(self, ans_id, qn_id, ans_changes):
-        query = "UPDATE answers SET answer = %s WHERE ans_id = %s AND qn_id = %s"
-        vars = ans_changes, ans_id, qn_id
+    def edit_answer(self, qn_id, ans_id, ans_changes):
+        query = "UPDATE answers SET answer = %s WHERE qn_id = %s AND ans_id = %s"
+        vars = ans_changes, qn_id, ans_id
         self.cursor.execute(query, vars)
 
-    def mark_answer(self, ans_id, qn_id):
-        mark_query = "UPDATE answers SET prefered = TRUE WHERE ans_id = %s and qn_id = %s"
-        vars = ans_id, qn_id
+    def mark_answer(self, qn_id, ans_id):
+        mark_query = "UPDATE answers SET prefered=TRUE WHERE ans_id = %s and qn_id = %s"
+        vars = qn_id, ans_id
         self.cursor.execute(mark_query, vars)
 
 
 if __name__ == '__main__':
     db = DatabaseAccess()
-    db.create_table_answer()
+    db.query_answers_table('1', '2')
+    # db.create_table_answer()
+    # db.create_table_questions()
     # db.mark_answer(2, "6", True)
     # db.get_answers_to_a_qn("1")
     # db.get_qn_by_id(5)
