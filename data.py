@@ -1,0 +1,42 @@
+user1 = {
+	"display_name":" jb",
+	"email":"jb@gmail.com",
+	"password":"1"
+}
+
+user2 = {
+	"display_name":" bugingo",
+	"email":"bugingo@gmail.com",
+	"password":"1"
+}
+
+user3 ={
+
+	"email":"jb@gmail.com",
+	"password":"1  "
+}
+
+user4 ={
+	"display_name":" ",
+	"email":"",
+	"password":"james#11  "
+}
+
+user5 = {
+	"display_name":" joh",
+	"email":"jb@gmail.com",
+	"password":"1"
+}
+user6 = {
+	"display_name":" johnie",
+	"email":"jbcom",
+	"password":"1"
+}
+user7 = {
+	"display_name":" jb",
+	"email":"jb@gmail.com",
+	"password":"@jb1234"
+}
+
+
+question1 = {"question":"whats your other name?"}

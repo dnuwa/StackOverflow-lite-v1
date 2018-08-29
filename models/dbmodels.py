@@ -56,7 +56,7 @@ class DatabaseAccess:
         return rows
 
     def create_table_questions(self):
-        sql_query = "CREATE TABLE IF NOT EXISTS questions(qn_id serial PRIMARY KEY, user_id varchar(100) NOT NULL, question varchar(1000) NOT NULL)"
+        sql_query = "CREATE TABLE IF NOT EXISTS questions(qn_id serial PRIMARY KEY, user_id INTEGER NOT NULL, question varchar(1000) NOT NULL, FOREIGN KEY (user_Id) REFERENCES subscribers(user_Id) ON DELETE CASCADE ON UPDATE CASCADE)"
         self.cursor.execute(sql_query)
 
     def post_a_question(self, user_id, question):
