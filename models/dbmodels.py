@@ -49,7 +49,6 @@ class DatabaseAccess:
         query = "SELECT * FROM subscribers WHERE email = %s"
         self.cursor.execute(query, (email, ))
         rows = self.cursor.fetchall()
-        #print (rows)
         return rows
 
     def create_table_questions(self):
@@ -70,7 +69,6 @@ class DatabaseAccess:
         qnquery = "SELECT * FROM questions WHERE qn_id = %s"
         self.cursor.execute(qnquery, (qn_id, ))
         data = self.cursor.fetchall()
-        print(data)
         return data
 
     def delete_question(self, qn_id):
@@ -80,7 +78,6 @@ class DatabaseAccess:
     def create_table_answer(self):
         sql_query = "CREATE TABLE IF NOT EXISTS answers(ans_id serial PRIMARY KEY, qn_id INTEGER NOT NULL, user_id INTEGER NOT NULL, answer varchar(200) NOT NULL, prefered BOOLEAN NOT NULL DEFAULT FALSE)"
         self.cursor.execute(sql_query)
-        print("table created")
 
     def post_answer(self, qn_id, user_id, ans):
         ans_query = "INSERT INTO answers (qn_id, user_id, answer) VALUES (%s, %s, %s)"
@@ -96,7 +93,6 @@ class DatabaseAccess:
         query = "SELECT answer, prefered FROM answers WHERE qn_id = %s"
         self.cursor.execute(query, (qn_id, ))
         data = self.cursor.fetchall()
-        print(data)
         return data
 
     def delete_all_answers_to_a_deleted_question(self, qn_id):
@@ -108,7 +104,6 @@ class DatabaseAccess:
         vars = ans_id, qn_id
         self.cursor.execute(query_db, vars)
         result = self.cursor.fetchone()
-        print(result)
         return result
 
     def edit_answer(self, qn_id, ans_id, ans_changes):
