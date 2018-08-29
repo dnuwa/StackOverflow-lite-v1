@@ -38,12 +38,20 @@ Test to see how the end points work
 
 ### API Endpoints
 
-| Resource URL | Methods | Description | Requires Token | Inputs |
+| Resource URL | Methods | Description | Requires Token |
 | -------- | ------------- | --------- |--------------- |
-| `/api/v1/auth/signup` | `POST, GET`  | Post new user and get all users | `FALSE` |{"display_name": "","email": "","password": ""}|
-| `/api/v1/auth/login` | `POST`  | User Login | `FALSE` |{"display_name": "","password": ""}|
-| `/api/v1/questions` | `GET, POST` | Add & Fetch questions | `TRUE` |{"question": "" }|
+| `/api/v1/auth/signup` | `POST, GET`  | Post new user and get all users | `FALSE` |
+| `/api/v1/auth/login` | `POST`  | User Login | `FALSE` |
+| `/api/v1/questions` | `GET, POST` | Add & Fetch questions | `TRUE` |
 | `/api/v1/questions/<questionId>` | `GET, DELETE` | Manipulate a single question | `TRUE` |
-| `/api/v1/questions/<questionId>/answers` | `POST` | Add an answer | `TRUE` |{"answer": ""}|
-| `/api/v1/questions/<questionId>/answers/<answerId>` | `PUT` | Edit an answer | `TRUE` |{ "answer": "" }|
+| `/api/v1/questions/<questionId>/answers` | `POST` | Add an answer | `TRUE` |
+| `/api/v1/questions/<questionId>/answers/<answerId>` | `PUT` | Edit an answer | `TRUE` |
 | `/api/v1/questions/<qn_Id>/answers/<ans_id>` | `PUT` | Mark an Answer as Preferred | `TRUE` |
+
+### inputs
+
+sign up -> {"display_name": "","email": "","password": ""}
+login -> {"display_name": "","password": ""}
+post a question -> {"question": "" }
+post an answer -> {"answer": ""}
+edit an answer -> {"answer": ""}
