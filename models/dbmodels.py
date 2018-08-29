@@ -28,7 +28,6 @@ class DatabaseAccess:
     def create_table_subscribers(self):
         sql_query = "CREATE TABLE IF NOT EXISTS subscribers(user_id serial PRIMARY KEY, display_name varchar(100) NOT NULL, email varchar(100) NOT NULL, password varchar(100) NOT NULL)"
         self.cursor.execute(sql_query)
-        print('table created')
 
     def add_new_subscriber(self, display_name, email, password):
         query = "INSERT INTO subscribers (display_name, email, password) VALUES (%s, %s, %s)"
@@ -38,14 +37,12 @@ class DatabaseAccess:
         query = "SELECT * FROM subscribers"
         self.cursor.execute(query)
         rows = self.cursor.fetchall()
-        print(rows)
         return rows
 
     def no_name_duplicates(self, display_name):
         query = "SELECT * FROM subscribers WHERE display_name = %s"
         self.cursor.execute(query, (display_name, ))
         rows = self.cursor.fetchall()
-        print(rows)
         return rows
 
     def no_email_duplicates(self, email):
@@ -56,7 +53,7 @@ class DatabaseAccess:
         return rows
 
     def create_table_questions(self):
-        sql_query = "CREATE TABLE IF NOT EXISTS questions(qn_id serial PRIMARY KEY, user_id INTEGER NOT NULL, question varchar(1000) NOT NULL, FOREIGN KEY (user_Id) REFERENCES subscribers(user_Id) ON DELETE CASCADE ON UPDATE CASCADE)"
+        sql_query = "CREATE TABLE IF NOT EXISTS questions(qn_id serial PRIMARY KEY, user_id INTEGER NOT NULL, question varchar(1000) NOT NULL)"
         self.cursor.execute(sql_query)
 
     def post_a_question(self, user_id, question):
@@ -81,7 +78,7 @@ class DatabaseAccess:
         self.cursor.execute(deletion_query, (qn_id, ))
 
     def create_table_answer(self):
-        sql_query = "CREATE TABLE IF NOT EXISTS answers(ans_id serial PRIMARY KEY, qn_id INTEGER NOT NULL, user_id INTEGER NOT NULL, answer varchar(200) NOT NULL, prefered BOOLEAN NOT NULL DEFAULT FALSE, FOREIGN KEY (user_Id) REFERENCES subscribers(user_Id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (qn_id) REFERENCES questions(qn_id) ON DELETE CASCADE ON UPDATE CASCADE)"
+        sql_query = "CREATE TABLE IF NOT EXISTS answers(ans_id serial PRIMARY KEY, qn_id INTEGER NOT NULL, user_id INTEGER NOT NULL, answer varchar(200) NOT NULL, prefered BOOLEAN NOT NULL DEFAULT FALSE)"
         self.cursor.execute(sql_query)
         print("table created")
 

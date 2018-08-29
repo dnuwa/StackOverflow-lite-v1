@@ -39,4 +39,5 @@ user7 = {
 }
 
 
-question1 = {"question":"whats your other name?"}
+question1 = {"question":"what is a data structure?"}
+answer1 = {"answer":"data structure is a data organization"}
