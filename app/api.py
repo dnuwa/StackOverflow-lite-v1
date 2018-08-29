@@ -23,7 +23,7 @@ class Users(Resource):
         try:
             display_name = data['display_name'].strip()
             email = data['email'].strip()
-            #password = data['password'].strip()
+
             hashed_password = generate_password_hash(
                 data['password'].strip(), method='sha256')
 
@@ -43,7 +43,7 @@ class Users(Resource):
                     return {'msg': 'An account with this email exists'}, 401
 
             new_user.add_new_subscriber(display_name, email, hashed_password)
-            # print("user created")
+
             return {'msg': 'success!'}, 201
 
         except KeyError as e:
@@ -134,14 +134,14 @@ class QuestionByID(Resource):
     def delete(self, questionId):
         try:
             user_id = get_jwt_identity()
-            id_string = str(user_id)
+
             qn = DatabaseAccess()
             result = qn.get_qn_by_id(questionId)
             for item in result:
-                if item['user_id'] == id_string:
+                if item['user_id'] == user_id:
 
                     qn.delete_question(questionId)
-                    qn.delete_all_answers_to_a_deleted_question(questionId)
+
                     return {'msg': 'Question successfuly deleted'}, 200  # 204
 
                 else:

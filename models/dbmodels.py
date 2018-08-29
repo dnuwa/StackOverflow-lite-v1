@@ -81,7 +81,7 @@ class DatabaseAccess:
         self.cursor.execute(deletion_query, (qn_id, ))
 
     def create_table_answer(self):
-        sql_query = "CREATE TABLE IF NOT EXISTS answers(ans_id serial PRIMARY KEY, qn_id varchar(100) NOT NULL, user_id varchar(100) NOT NULL, answer varchar(200) NOT NULL, prefered BOOLEAN NOT NULL DEFAULT FALSE)"
+        sql_query = "CREATE TABLE IF NOT EXISTS answers(ans_id serial PRIMARY KEY, qn_id INTEGER NOT NULL, user_id INTEGER NOT NULL, answer varchar(200) NOT NULL, prefered BOOLEAN NOT NULL DEFAULT FALSE, FOREIGN KEY (user_Id) REFERENCES subscribers(user_Id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (qn_id) REFERENCES questions(qn_id) ON DELETE CASCADE ON UPDATE CASCADE)"
         self.cursor.execute(sql_query)
         print("table created")
 
@@ -127,7 +127,8 @@ class DatabaseAccess:
 
 if __name__ == '__main__':
     db = DatabaseAccess()
-    db.query_answers_table('1', '2')
+    db.get_qn_by_id(2)
+    # db.create_table_answer()
     # db.create_table_answer()
     # db.create_table_questions()
     # db.mark_answer(2, "6", True)
