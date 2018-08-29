@@ -43,7 +43,7 @@ class Users(Resource):
                     return {'msg': 'An account with this email exists'}, 401
 
             new_user.add_new_subscriber(display_name, email, hashed_password)
-            print("user created")
+            # print("user created")
             return {'msg': 'success!'}, 201
 
         except KeyError as e:
@@ -116,11 +116,17 @@ class QuestionByID(Resource):
 
     @jwt_required
     def get(self, questionId):
+        question = None
         try:
             fetch_one_qn = DatabaseAccess()
             ID = int(questionId)
-            question = fetch_one_qn.get_qn_by_id(ID)
-            return {'Question': question}, 200
+            question_list = fetch_one_qn.get_qn_by_id(ID)
+            answers_list = fetch_one_qn.get_answers_to_a_qn(questionId)
+            for qn in question_list:
+                question = qn['question']
+
+            return {'Question': question, 'Answers': answers_list}, 200
+
         except ValueError as err:
             return {'error': str(err)+'should be an integer'}, 406
 
@@ -135,6 +141,7 @@ class QuestionByID(Resource):
                 if item['user_id'] == id_string:
 
                     qn.delete_question(questionId)
+                    qn.delete_all_answers_to_a_deleted_question(questionId)
                     return {'msg': 'Question successfuly deleted'}, 200  # 204
 
                 else:
@@ -144,6 +151,7 @@ class QuestionByID(Resource):
 
         except Exception as err:
             return {'error': str(err) + "THE questionID SHOULD BE AN INTEGER!"}, 406
+
 
 class Answers(Resource):
 
@@ -161,11 +169,12 @@ class Answers(Resource):
 
             new_answer.create_table_answer()
             new_answer.post_answer(qnId, user_id, answer)
-            return {'msg':'An answer has been successfully added'}, 201
+            return {'msg': 'An answer has been successfully added'}, 201
 
         except Exception as err:
             return {'error': str(err) + "THE questionID SHOULD BE AN INTEGER!"}, 406
-            
+
+
 class FetchAllAnswers(Resource):
 
     def get(self):
@@ -174,3 +183,46 @@ class FetchAllAnswers(Resource):
         return {'All-Answers': select_all_answers}
 
 
+class MarkAnswerPreferred(Resource):
+
+    @jwt_required
+    def put(self, questionId, answerId):
+        current_user_identity = get_jwt_identity()
+
+        query = DatabaseAccess()
+        query_questions_table = query.get_qn_by_id(questionId)
+        for user in query_questions_table:
+            if int(user['user_id']) == current_user_identity:
+                answer_to_mark = DatabaseAccess()
+                answer_to_mark.mark_answer(questionId, answerId)
+                return {'msg': 'Answer has been marked as prefered'}, 201
+            else:
+                return {'msg': 'You don not own this qn'}, 403
+
+
+class EditAnswer(Resource):
+
+    @jwt_required
+    def put(self, questionId, answerId):
+        try:
+            current_user_identity = get_jwt_identity()
+
+            query = DatabaseAccess()
+            result_on_query = query.query_answers_table(questionId, answerId)
+
+            if not result_on_query:
+                return {'msg': 'No such answer in database'}, 401
+
+            # updating an answer
+            if int(result_on_query['user_id']) == current_user_identity:
+                new_data = request.get_json()
+                ans_changes = new_data['answer'].strip()
+                qnobj = DatabaseAccess()
+                qnobj.edit_answer(questionId, answerId, ans_changes)
+                return {'msg': 'Changes have been saved successfully'}, 201
+
+            else:
+                return {'msg': 'you are not permited to edit this'}, 403
+
+        except Exception as err:
+            return {'error': str(err) + "THE questionID and answerId SHOULD BE INTEGERS!"}, 406

@@ -73,7 +73,7 @@ class DatabaseAccess:
         qnquery = "SELECT * FROM questions WHERE qn_id = %s"
         self.cursor.execute(qnquery, (qn_id, ))
         data = self.cursor.fetchall()
-        print (data)
+        print(data)
         return data
 
     def delete_question(self, qn_id):
@@ -81,8 +81,9 @@ class DatabaseAccess:
         self.cursor.execute(deletion_query, (qn_id, ))
 
     def create_table_answer(self):
-        sql_query = "CREATE TABLE IF NOT EXISTS answers(ans_id serial PRIMARY KEY, qn_id varchar(100) NOT NULL, user_id varchar(100) NOT NULL, answer varchar(200) NOT NULL, ans_state varchar(20))"
+        sql_query = "CREATE TABLE IF NOT EXISTS answers(ans_id serial PRIMARY KEY, qn_id varchar(100) NOT NULL, user_id varchar(100) NOT NULL, answer varchar(200) NOT NULL, prefered BOOLEAN NOT NULL DEFAULT FALSE)"
         self.cursor.execute(sql_query)
+        print("table created")
 
     def post_answer(self, qn_id, user_id, ans):
         ans_query = "INSERT INTO answers (qn_id, user_id, answer) VALUES (%s, %s, %s)"
@@ -92,13 +93,46 @@ class DatabaseAccess:
         get_all_query = "SELECT * FROM answers"
         self.cursor.execute(get_all_query)
         result = self.cursor.fetchall()
-        print (result)
         return result
 
+    def get_answers_to_a_qn(self, qn_id):
+        query = "SELECT answer, prefered FROM answers WHERE qn_id = %s"
+        self.cursor.execute(query, (qn_id, ))
+        data = self.cursor.fetchall()
+        print(data)
+        return data
+
+    def delete_all_answers_to_a_deleted_question(self, qn_id):
+        deletion_query = "DELETE FROM answers WHERE qn_id = %s"
+        self.cursor.execute(deletion_query, (qn_id, ))
+
+    def query_answers_table(self, qn_id, ans_id):
+        query_db = "SELECT * FROM answers WHERE ans_id = %s AND qn_id = %s"
+        vars = ans_id, qn_id
+        self.cursor.execute(query_db, vars)
+        result = self.cursor.fetchone()
+        print(result)
+        return result
+
+    def edit_answer(self, qn_id, ans_id, ans_changes):
+        query = "UPDATE answers SET answer = %s WHERE qn_id = %s AND ans_id = %s"
+        vars = ans_changes, qn_id, ans_id
+        self.cursor.execute(query, vars)
+
+    def mark_answer(self, qn_id, ans_id):
+        mark_query = "UPDATE answers SET prefered=TRUE WHERE ans_id = %s and qn_id = %s"
+        vars = qn_id, ans_id
+        self.cursor.execute(mark_query, vars)
 
 
 if __name__ == '__main__':
     db = DatabaseAccess()
-    db.get_all_answers()
+    db.query_answers_table('1', '2')
+    # db.create_table_answer()
+    # db.create_table_questions()
+    # db.mark_answer(2, "6", True)
+    # db.get_answers_to_a_qn("1")
+    # db.get_qn_by_id(5)
+    # db.query_answers_table('1', '2')
     # db.no_email_duplicates("danile.nuwa@gmail.com")
-    app.run(debug=True)
+    # app.run(debug=True)
