@@ -10,7 +10,7 @@ api.add_resource(Questions, '/questions')
 api.add_resource(QuestionByID, '/questions/<questionId>')
 api.add_resource(Answers, '/questions/<questionId>/answers')
 api.add_resource(EditAnswer, '/questions/<questionId>/answers/<answerId>')
-api.add_resource(MarkAnswerPreferred, '/question/<questionId>/answers/<answerId>')
+api.add_resource(MarkAnswerPreferred, '/question/<questionId>/answer/<answerId>')
 
 
 api.add_resource(FetchAllAnswers, '/questions/answers')

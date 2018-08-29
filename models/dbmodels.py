@@ -3,8 +3,6 @@ from psycopg2.extras import RealDictCursor
 import os
 from flask import Flask
 
-app = Flask(__name__)
-
 
 class DatabaseAccess:
     def __init__(self):
@@ -65,6 +63,12 @@ class DatabaseAccess:
         data = self.cursor.fetchall()
         return data
 
+    def no_qn_duplicates(self, qn):
+        query = "SELECT * FROM questions WHERE question = %s"
+        self.cursor.execute(query, (qn, ))
+        result = self.cursor.fetchall()
+        return result
+
     def get_qn_by_id(self, qn_id):
         qnquery = "SELECT * FROM questions WHERE qn_id = %s"
         self.cursor.execute(qnquery, (qn_id, ))
@@ -115,17 +119,3 @@ class DatabaseAccess:
         mark_query = "UPDATE answers SET prefered=TRUE WHERE ans_id = %s and qn_id = %s"
         vars = qn_id, ans_id
         self.cursor.execute(mark_query, vars)
-
-
-if __name__ == '__main__':
-    db = DatabaseAccess()
-    db.get_qn_by_id(2)
-    # db.create_table_answer()
-    # db.create_table_answer()
-    # db.create_table_questions()
-    # db.mark_answer(2, "6", True)
-    # db.get_answers_to_a_qn("1")
-    # db.get_qn_by_id(5)
-    # db.query_answers_table('1', '2')
-    # db.no_email_duplicates("danile.nuwa@gmail.com")
-    # app.run(debug=True)

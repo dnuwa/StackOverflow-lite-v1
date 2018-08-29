@@ -95,9 +95,14 @@ class Questions(Resource):
         try:
             question = qn_info['question'].strip()
             current_user_id = get_jwt_identity()
+            check = new_qn.no_qn_duplicates(question)
 
             if question == "":
                 return {'error': 'Please add a question'}, 400
+
+            for quest in check:
+                if quest['question'] == question:
+                    return {'msg': 'Question already exists with questionId {}'.format(quest['qn_id'])}, 400
 
             new_qn.post_a_question(current_user_id, question)
             return {'msg': 'Question has successfully added'}, 201
@@ -141,6 +146,7 @@ class QuestionByID(Resource):
                 if item['user_id'] == user_id:
 
                     qn.delete_question(questionId)
+                    qn.delete_all_answers_to_a_deleted_question(questionId)
 
                     return {'msg': 'Question successfuly deleted'}, 200  # 204
 

@@ -2,7 +2,7 @@ import unittest
 import json
 from models.dbmodels import DatabaseAccess
 from app.api import app, api
-from data import user1, user2, user3, user4, user5, user6, user7, question1, answer1
+from models.data import user1, user2, user3, user4, user5, user6, user7, question1, answer1
 
 from run import api
 
@@ -57,39 +57,44 @@ class TestClass(unittest.TestCase):
         self.assertEqual(login_response.status_code, 401)
 
     def test_user_logsin_successfully(self):
-    
+
         login_response = self.app.post(
             '{}auth/login'.format(BASE_URL), content_type="application/json", data=json.dumps(user1))
         self.assertEqual(login_response.json, {
                          "error": "User jb doesn't exist"})
 
     def test_post_question_successfully(self):
-        response = self.app.post('{}auth/signup'.format(BASE_URL), content_type = "application/json", data =json.dumps(user1))
+        response = self.app.post('{}auth/signup'.format(BASE_URL),
+                                 content_type="application/json", data=json.dumps(user1))
         self.assertEqual(response.json, {"msg": "success!"})
         self.assertEqual(response.status_code, 201)
 
-        login_response = self.app.post('{}auth/login'.format(BASE_URL), content_type = "application/json", data =json.dumps(user1))
+        login_response = self.app.post(
+            '{}auth/login'.format(BASE_URL), content_type="application/json", data=json.dumps(user1))
         self.assertEqual(login_response.status_code, 200)
 
         login_res = login_response.json
         token = login_res['Token']
-        submit_question = self.app.post('{}questions'.format(BASE_URL), content_type = "application/json", data =json.dumps(question1), headers={'Authorization':'Bearer {}'.format(token)})
+        submit_question = self.app.post('{}questions'.format(BASE_URL), content_type="application/json",
+                                        data=json.dumps(question1), headers={'Authorization': 'Bearer {}'.format(token)})
         self.assertEqual(submit_question.status_code, 201)
 
     def test_post_an_answer_successfully(self):
-        response_acc = self.app.post('{}auth/signup'.format(BASE_URL), content_type = "application/json", data=json.dumps(user1))
+        response_acc = self.app.post(
+            '{}auth/signup'.format(BASE_URL), content_type="application/json", data=json.dumps(user1))
         self.assertEqual(response_acc.status_code, 201)
 
-        login_response = self.app.post('{}auth/login'.format(BASE_URL), content_type = "application/json", data =json.dumps(user1))
+        login_response = self.app.post(
+            '{}auth/login'.format(BASE_URL), content_type="application/json", data=json.dumps(user1))
         login_res = login_response.json
         token = login_res['Token']
-        create_question = self.app.post('{}questions'.format(BASE_URL), content_type = "application/json", data =json.dumps(question1), headers={'Authorization':'Bearer {}'.format(token)})
+        create_question = self.app.post('{}questions'.format(BASE_URL), content_type="application/json",
+                                        data=json.dumps(question1), headers={'Authorization': 'Bearer {}'.format(token)})
         self.assertEqual(create_question.status_code, 201)
 
-        add_an_answer = self.app.post('{}questions/1/answers'.format(BASE_URL), content_type = "application/json", data =json.dumps(answer1), headers={'Authorization':'Bearer {}'.format(token)})
+        add_an_answer = self.app.post('{}questions/1/answers'.format(BASE_URL), content_type="application/json",
+                                      data=json.dumps(answer1), headers={'Authorization': 'Bearer {}'.format(token)})
         self.assertEqual(add_an_answer.status_code, 201)
-
-
 
     def tearDown(self):
         sql_query_subscribers = "DROP TABLE IF EXISTS subscribers"
