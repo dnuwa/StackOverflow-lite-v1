@@ -34,3 +34,8 @@ omit =
     */certifi/*
     */six.py
     */mistune.py
+    */psycopg2/*
+    */jwt/*
+    */flask_jwt_extended/*
+    */typing.py
+    
