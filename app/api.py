@@ -4,9 +4,10 @@ from flask_restful import Resource, Api
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+import flask_restful
 
 app = Flask(__name__)
-api = Api(app, prefix="/api/v1")
+api = flask_restful.Api(app, prefix="/api/v1", catch_all_404s=True)
 
 
 @app.before_first_request
@@ -37,6 +38,9 @@ class Users(Resource):
 
             if display_name == "" or hashed_password == "":
                 return {'error': 'ensure all feilds are field correctlty'}, 400
+
+            if not re.match("^[a-zA-Z0-9_ ]*$", display_name):
+                return {'error':'Your display_name can only contain numbers and letters'}, 400
 
             if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
                 return {'error': 'Invalid email address'}, 400
