@@ -1,7 +1,7 @@
 from app.api import app, api, Users, AuthLogin, Questions, QuestionByID, Answers, FetchAllAnswers, EditAnswer, MarkAnswerPreferred
 from flask_jwt_extended import JWTManager
 
-app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'
+app.config['JWT_SECRET_KEY'] = 'jwt-secret-string' #Setup the Flask-JWT-Extended extension
 jwt = JWTManager(app)
 
 api.add_resource(Users, '/auth/signup')

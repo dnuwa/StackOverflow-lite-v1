@@ -4,17 +4,22 @@ from flask_restful import Resource, Api
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-
+from flasgger import Swagger, swag_from
 app = Flask(__name__)
 api = Api(app, prefix="/api/v1")
 
 
-class Users(Resource):
-    def __init__(self, display_name=None, email=None, password=None):
-        self.display_name = display_name
-        self.email = email
-        self.password = password
+@app.before_first_request
+def create_tables():
+    data = DatabaseAccess()
+    data.create_table_answer()
+    data.create_table_questions()
+    data.create_table_subscribers()
 
+
+class Users(Resource):
+
+    @swag_from('add_user.yaml', methods=['POST'])
     def post(self):
         new_user = DatabaseAccess()
         new_user.create_table_subscribers()
@@ -23,9 +28,13 @@ class Users(Resource):
         try:
             display_name = data['display_name'].strip()
             email = data['email'].strip()
+            secure = data['password'].strip()
+
+            if len(secure) < 8:
+                return {'msg': 'Make sure your password is at lest 8 characters'}, 400
 
             hashed_password = generate_password_hash(
-                data['password'].strip(), method='sha256')
+                secure, method='sha256')
 
             if display_name == "" or hashed_password == "":
                 return {'error': 'ensure all feilds are field correctlty'}, 400
@@ -44,7 +53,7 @@ class Users(Resource):
 
             new_user.add_new_subscriber(display_name, email, hashed_password)
 
-            return {'msg': 'success!'}, 201
+            return {'msg': 'You  have successfully signed as {}'.format(display_name)}, 201
 
         except KeyError as e:
             return {'error': str(e)+",missed out some info, check the keys too"}, 400
@@ -127,10 +136,14 @@ class QuestionByID(Resource):
             ID = int(questionId)
             question_list = fetch_one_qn.get_qn_by_id(ID)
             answers_list = fetch_one_qn.get_answers_to_a_qn(questionId)
+            if not question_list:
+                return {'msg': 'No question with ID {}'.format(ID)}, 401
+
             for qn in question_list:
                 question = qn['question']
+                qn_id = qn['qn_id']
 
-            return {'Question': question, 'Answers': answers_list}, 200
+            return {'Question': question, 'QuestionId': qn_id, 'Answers': answers_list}, 200
 
         except ValueError as err:
             return {'error': str(err)+'should be an integer'}, 406
@@ -172,6 +185,11 @@ class Answers(Resource):
             db_check = new_answer.get_qn_by_id(qnId)
             if not db_check:
                 return {'error': 'Question does not exist'}
+
+            new_check = new_answer.no_duplicate_answers(answer)
+            for ans_list in new_check:
+                if ans_list['answer'] == answer:
+                    return {'msg': 'This answer already exists'}, 401
 
             new_answer.create_table_answer()
             new_answer.post_answer(qnId, user_id, answer)

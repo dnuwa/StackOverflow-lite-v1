@@ -2,7 +2,7 @@ import unittest
 import json
 from models.dbmodels import DatabaseAccess
 from app.api import app, api
-from models.data import user1, user2, user3, user4, user5, user6, user7, question1, answer1
+from data import user1, user2, user3, user4, user5, user6, user7, question1, answer1
 
 from run import api
 
@@ -20,8 +20,8 @@ class TestClass(unittest.TestCase):
     # test user signup
     def test_user_added_successfully(self):
         response = self.app.post(
-            '/api/v1/auth/signup', content_type="application/json", data=json.dumps(user1))
-        self.assertEqual(response.json, {"msg": "success!"})
+            '{}auth/signup'.format(BASE_URL), content_type="application/json", data=json.dumps(user1))
+        self.assertEqual(response.json, {"msg": "You  have successfully signed as jb"})
         self.assertEqual(response.status_code, 201)
 
     def test_user_attempts_missing_fields(self):
@@ -66,7 +66,7 @@ class TestClass(unittest.TestCase):
     def test_post_question_successfully(self):
         response = self.app.post('{}auth/signup'.format(BASE_URL),
                                  content_type="application/json", data=json.dumps(user1))
-        self.assertEqual(response.json, {"msg": "success!"})
+        self.assertEqual(response.json, {"msg": "You  have successfully signed as jb"})
         self.assertEqual(response.status_code, 201)
 
         login_response = self.app.post(

@@ -58,7 +58,7 @@ class DatabaseAccess:
         self.cursor.execute(sql_query, (user_id, question,))
 
     def retrieve_all(self):
-        dbquery = "SELECT * FROM questions"
+        dbquery = "SELECT qn_id, question FROM questions"
         self.cursor.execute(dbquery)
         data = self.cursor.fetchall()
         return data
@@ -92,6 +92,13 @@ class DatabaseAccess:
         self.cursor.execute(get_all_query)
         result = self.cursor.fetchall()
         return result
+
+    def no_duplicate_answers(self, user_answer):
+        query = "SELECT answer FROM answers WHERE answer = %s"
+        self.cursor.execute(query, (user_answer,))
+        data = self.cursor.fetchall()
+        print(data)
+        return data
 
     def get_answers_to_a_qn(self, qn_id):
         query = "SELECT answer, prefered FROM answers WHERE qn_id = %s"
