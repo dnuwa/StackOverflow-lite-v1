@@ -19,7 +19,6 @@ def create_tables():
 
 class Users(Resource):
 
-    @swag_from('add_user.yaml', methods=['POST'])
     def post(self):
         new_user = DatabaseAccess()
         new_user.create_table_subscribers()
