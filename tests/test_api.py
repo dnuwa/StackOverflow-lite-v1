@@ -21,7 +21,8 @@ class TestClass(unittest.TestCase):
     def test_user_added_successfully(self):
         response = self.app.post(
             '{}auth/signup'.format(BASE_URL), content_type="application/json", data=json.dumps(user1))
-        self.assertEqual(response.json, {"msg": "You  have successfully signed as jb"})
+        self.assertEqual(
+            response.json, {"msg": "You  have successfully signed as jb"})
         self.assertEqual(response.status_code, 201)
 
     def test_user_attempts_missing_fields(self):
@@ -66,7 +67,8 @@ class TestClass(unittest.TestCase):
     def test_post_question_successfully(self):
         response = self.app.post('{}auth/signup'.format(BASE_URL),
                                  content_type="application/json", data=json.dumps(user1))
-        self.assertEqual(response.json, {"msg": "You  have successfully signed as jb"})
+        self.assertEqual(
+            response.json, {"msg": "You  have successfully signed as jb"})
         self.assertEqual(response.status_code, 201)
 
         login_response = self.app.post(
@@ -78,6 +80,45 @@ class TestClass(unittest.TestCase):
         submit_question = self.app.post('{}questions'.format(BASE_URL), content_type="application/json",
                                         data=json.dumps(question1), headers={'Authorization': 'Bearer {}'.format(token)})
         self.assertEqual(submit_question.status_code, 201)
+
+    def test_get_all_questions(self):
+        response = self.app.post('{}auth/signup'.format(BASE_URL),
+                                 content_type="application/json", data=json.dumps(user1))
+        self.assertEqual(response.status_code, 201)
+
+        login_response = self.app.post(
+            '{}auth/login'.format(BASE_URL), content_type="application/json", data=json.dumps(user1))
+        self.assertEqual(login_response.status_code, 200)
+
+        login_res = login_response.json
+        token = login_res['Token']
+        submit_question = self.app.post('{}questions'.format(BASE_URL), content_type="application/json",
+                                        data=json.dumps(question1), headers={'Authorization': 'Bearer {}'.format(token)})
+        self.assertEqual(submit_question.status_code, 201)
+
+        return_question = self.app.get('{}questions'.format(BASE_URL), content_type="application/json",
+                                       data=json.dumps(question1), headers={'Authorization': 'Bearer {}'.format(token)})
+        self.assertEqual(return_question.status_code, 200)
+        self.assertIsInstance(return_question.json, dict)
+
+    def test_a_question_gets_deleted(self):
+        response = self.app.post('{}auth/signup'.format(BASE_URL),
+                                 content_type="application/json", data=json.dumps(user1))
+        self.assertEqual(response.status_code, 201)
+
+        login_response = self.app.post(
+            '{}auth/login'.format(BASE_URL), content_type="application/json", data=json.dumps(user1))
+        self.assertEqual(login_response.status_code, 200)
+
+        login_res = login_response.json
+        token = login_res['Token']
+        post_question = self.app.post('{}questions'.format(BASE_URL), content_type="application/json",
+                                      data=json.dumps(question1), headers={'Authorization': 'Bearer {}'.format(token)})
+        self.assertEqual(post_question.status_code, 201)
+
+        delete_question = self.app.delete('{}questions/1'.format(BASE_URL), content_type="application/json",
+                                          data=json.dumps(question1), headers={'Authorization': 'Bearer {}'.format(token)})
+        self.assertEqual(delete_question.status_code, 200)
 
     def test_post_an_answer_successfully(self):
         response_acc = self.app.post(

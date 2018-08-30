@@ -7,29 +7,21 @@ Clone the repo from GitHub:
 
 ```
 https://github.com/dnuwa/StackOverflow-lite-v1.git
-
 ```
-
 Create a virtual environment and activate it.
-
 ```
 virtualenv venv
 venv\Scripts\activate
-
 ```
 
 Install necessary requirements
-
 ```
 pip install -r requirements.txt
-
 ```
 
 Run unit tests
-
 ```
 pytest test_api.py
-
 ```
 
 ### Running the application on a local machine
@@ -45,13 +37,25 @@ Test to see how the end points work
 | `/api/v1/questions` | `GET, POST` | Add & Fetch questions | `TRUE` |
 | `/api/v1/questions/<questionId>` | `GET, DELETE` | Manipulate a single question | `TRUE` |
 | `/api/v1/questions/<questionId>/answers` | `POST` | Add an answer | `TRUE` |
-| `/api/v1/questions/<questionId>/answers/<answerId>` | `PUT` | Edit an answer | `TRUE` |
-| `/api/v1/questions/<qn_Id>/answers/<ans_id>` | `PUT` | Mark an Answer as Preferred | `TRUE` |
+| `/api/v1/questions/<questionId>/answers/<answerId>/edit` | `PUT` | Edit an answer | `TRUE` |
+| `/api/v1/questions/<questionId>/answers/<ananswerId>/preffered` | `PUT` | Mark an Answer as Preferred | `TRUE` |
 
 ### inputs
-
+```
 sign up -> {"display_name": "","email": "","password": ""}
 login -> {"display_name": "","password": ""}
 post a question -> {"question": "" }
 post an answer -> {"answer": ""}
 edit an answer -> {"answer": ""}
+```
+
+### Running api tests
+***
+install postgre sql
+create database test_db
+set testing environment by using the command --> set APP_SETTINGS=testing
+run nosetests
+
+****
+
+Everything set! :+1: - you are good togo! :shipit:
