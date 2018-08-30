@@ -4,7 +4,7 @@ from flask_restful import Resource, Api
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from flasgger import Swagger, swag_from
+
 app = Flask(__name__)
 api = Api(app, prefix="/api/v1")
 
