@@ -10,11 +10,11 @@ class DatabaseAccess:
             self.dbname = "test_db"
 
         else:
-            self.dbname = "stackoverflow-lite"
+            self.dbname = "dfmvm92fd90v7k"
 
         try:
             self.conn = psycopg2.connect(dbname="{}".format(
-                self.dbname), user="postgres", password="1234567890", host="localhost")
+                self.dbname), user=os.getenv('User'), password=os.getenv('Password'), host=os.getenv('Host'))
             self.conn.autocommit = True
 
             self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
