@@ -123,6 +123,6 @@ class DatabaseAccess:
         self.cursor.execute(query, vars)
 
     def mark_answer(self, qn_id, ans_id):
-        mark_query = "UPDATE answers SET prefered=TRUE WHERE ans_id = %s and qn_id = %s"
+        mark_query = "UPDATE answers SET prefered=TRUE WHERE  qn_id = %s and ans_id = %s"
         vars = qn_id, ans_id
         self.cursor.execute(mark_query, vars)

@@ -22,7 +22,7 @@ class TestClass(unittest.TestCase):
         response = self.app.post(
             '{}auth/signup'.format(BASE_URL), content_type="application/json", data=json.dumps(user1))
         self.assertEqual(
-            response.json, {"msg": "You  have successfully signed as jb"})
+            response.json, {"msg": "You  have successfully signed as joseph"})
         self.assertEqual(response.status_code, 201)
 
     def test_user_attempts_missing_fields(self):
@@ -62,13 +62,13 @@ class TestClass(unittest.TestCase):
         login_response = self.app.post(
             '{}auth/login'.format(BASE_URL), content_type="application/json", data=json.dumps(user1))
         self.assertEqual(login_response.json, {
-                         "error": "User jb doesn't exist"})
+                         "error": "User joseph doesn't exist"})
 
     def test_post_question_successfully(self):
         response = self.app.post('{}auth/signup'.format(BASE_URL),
                                  content_type="application/json", data=json.dumps(user1))
         self.assertEqual(
-            response.json, {"msg": "You  have successfully signed as jb"})
+            response.json, {"msg": "You  have successfully signed as joseph"})
         self.assertEqual(response.status_code, 201)
 
         login_response = self.app.post(

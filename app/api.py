@@ -22,7 +22,7 @@ class Users(Resource):
 
     def post(self):
         new_user = DatabaseAccess()
-        new_user.create_table_subscribers()
+        # new_user.create_table_subscribers()
 
         data = request.get_json()
         try:
@@ -32,6 +32,10 @@ class Users(Resource):
 
             if len(secure) < 8:
                 return {'msg': 'Make sure your password is at lest 8 characters'}, 400
+
+            if len(display_name) < 6:
+                return {'msg': 'Make sure your display_name is at lest 6 characters'}, 400
+                
 
             hashed_password = generate_password_hash(
                 secure, method='sha256')
@@ -101,7 +105,7 @@ class Questions(Resource):
     @jwt_required
     def post(self):
         new_qn = DatabaseAccess()
-        new_qn.create_table_questions()
+        # new_qn.create_table_questions()
         qn_info = request.get_json()
 
         try:
@@ -224,7 +228,7 @@ class MarkAnswerPreferred(Resource):
                 answer_to_mark.mark_answer(questionId, answerId)
                 return {'msg': 'Answer has been marked as prefered'}, 201
             else:
-                return {'msg': 'You don not own this qn'}, 403
+                return {'msg': 'You do not own this qn'}, 403
 
 
 class EditAnswer(Resource):
